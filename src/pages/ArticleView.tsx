@@ -17,7 +17,6 @@ interface Section {
 export default function ArticleView() {
   const { id } = useParams();
   const { progress, completeModule } = useProgress();
-  const [showQuiz, setShowQuiz] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [isFetching, setIsFetching] = useState(true);
@@ -192,7 +191,7 @@ export default function ArticleView() {
             </section>
           ))}
 
-          {/* Footer / Quiz Section */}
+          {/* Footer / Completion Section */}
           <section className="mt-32 pt-20 border-t border-cyber-line text-center max-w-4xl mx-auto relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-cyber-deep border border-cyber-line rotate-45 flex items-center justify-center shadow-[0_0_20px_rgba(0,242,255,0.2)]">
                 <div className="-rotate-45 text-cyber-accent"><TerminalIcon size={20} /></div>
@@ -200,15 +199,15 @@ export default function ArticleView() {
 
             {!isCompleted ? (
               <div className="cyber-card bg-cyber-accent/5 border-cyber-accent/20 border-dashed p-12 flex flex-col items-center rounded-sm">
-                <h3 className="text-2xl font-light uppercase tracking-[0.2em] text-white mb-4 glitch-text">اختبار النقاء الرقمي 💀</h3>
+                <h3 className="text-2xl font-light uppercase tracking-[0.2em] text-white mb-4 glitch-text">توثيق الاستيعاب 🛡️</h3>
                 <p className="text-sm text-cyber-muted max-w-xl leading-relaxed mb-10 font-light">
-                  أنت تقف في مواجهة الحقيقة. لتوثيق هذا الاستحقاق، يجب أن تمر عبر بوابة التطهير. أي خطأ قد يعني العودة لنقطة الصفر.
+                  تم الوصول لنهاية العقدة المعرفية. للحفاظ على تقدمك في السجلات المحلية، قم بتجميد البيانات الآن.
                 </p>
                 <button 
-                  onClick={() => setShowQuiz(true)}
+                  onClick={() => completeModule(id || '')}
                   className="group relative bg-cyber-accent text-cyber-black px-12 py-4 text-xs font-bold uppercase tracking-[0.4em] hover:bg-white transition-all shadow-[0_0_40px_rgba(230,25,25,0.4)] overflow-hidden"
                 >
-                  <span className="relative z-10">بدء مرحلة التطهير</span>
+                  <span className="relative z-10">توثيق قراءة الوحدة</span>
                   <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 </button>
               </div>
@@ -217,7 +216,7 @@ export default function ArticleView() {
                 <ShieldCheck size={48} className="text-cyber-accent mb-6 animate-pulse" />
                 <h3 className="text-2xl font-light uppercase tracking-[0.2em] text-white mb-4">تم تعميد العقدة بنجاح</h3>
                 <p className="text-sm text-cyber-muted max-w-xl leading-relaxed mb-10 font-light">
-                  تم استيعاب جوهر التهديد. سجلاتك الآن جزء من الفراغ السرمدي.
+                  تم استيعاب جوهر التهديد. سجلاتك الآن جزء من الأرشيف الشخصي.
                 </p>
                 <Link to="/academy" className="mt-8 text-xs text-cyber-accent hover:underline tracking-widest font-mono uppercase">العودة للظلال</Link>
               </div>
@@ -225,36 +224,6 @@ export default function ArticleView() {
           </section>
         </main>
       </div>
-
-      {/* Quiz Modal */}
-      <AnimatePresence>
-        {showQuiz && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cyber-black/95 backdrop-blur-xl">
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-cyber-deep border border-cyber-line rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-3xl w-full relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-1 h-full bg-cyber-accent" />
-              <button 
-                onClick={() => setShowQuiz(false)}
-                className="absolute top-6 left-6 p-2 text-cyber-muted hover:text-white transition-colors z-20"
-                title="إغلاق"
-              >
-                <X size={24} />
-              </button>
-              <div className="p-8 md:p-12">
-                <ModuleQuiz 
-                  moduleId={id || ''} 
-                  onComplete={() => completeModule(id || '')} 
-                  onClose={() => setShowQuiz(false)}
-                />
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

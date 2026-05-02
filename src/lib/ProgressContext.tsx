@@ -26,7 +26,11 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const saved = localStorage.getItem('cyber_progress');
     if (saved) {
-      setProgress(JSON.parse(saved));
+      try {
+        setProgress(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse local progress:", e);
+      }
     }
     setIsLoading(false);
   }, []);
@@ -42,11 +46,10 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (prev.completedModules.includes(moduleId)) return prev;
       const newModules = [...prev.completedModules, moduleId];
       
-      // logic to level up: Must have ethics signed and 2+ modules
+      // Level up logic (client-side only now)
       let newLevel = prev.level;
       if (newModules.length >= 2 && prev.level === 0 && prev.ethicsSigned) {
         newLevel = 1;
-        console.log("🛡️ LEVEL_ADVANCED: User reached Level 1");
       }
       
       return { ...prev, completedModules: newModules, level: newLevel };
@@ -55,7 +58,6 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const signEthics = () => {
     setProgress(prev => {
-      // Check if they already have 2 modules when signing ethics
       const shouldAdvance = prev.completedModules.length >= 2 && prev.level === 0;
       return { ...prev, ethicsSigned: true, level: shouldAdvance ? 1 : prev.level };
     });

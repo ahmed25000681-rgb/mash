@@ -27,8 +27,8 @@ service cloud.firestore {
     }
     function isAdmin() {
       return isSignedIn() && isEmailVerified() && (
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
-        request.auth.token.email == "ahmed25000681@gmail.com"
+        request.auth.token.email == "ahmed25000681@gmail.com" ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
       );
     }
 
@@ -76,16 +76,19 @@ service cloud.firestore {
       allow get: if isOwner(userId);
       allow create: if isOwner(userId) && isValidUser(incoming());
       allow update: if isOwner(userId) && (
-        // Action: Sign Conduct
-        (incoming().diff(existing()).affectedKeys().hasOnly(['signedCodeOfConduct']) && incoming().signedCodeOfConduct == true) ||
-        // Action: Advance Level - Hardened check
-        (incoming().diff(existing()).affectedKeys().hasOnly(['currentLevel']) && 
-         incoming().currentLevel == existing().currentLevel + 1 &&
-         existing().completedModules.size() >= 2) ||
-        // Action: Complete Module
-        (incoming().diff(existing()).affectedKeys().hasOnly(['completedModules']) &&
+        // Action: Sign Conduct & Level up
+        (incoming().diff(existing()).affectedKeys().hasOnly(['signedCodeOfConduct', 'currentLevel']) &&
+         incoming().signedCodeOfConduct == true &&
+         // Verify Level 1 transition: Must have 2 modules and signed conduct
+         (incoming().currentLevel == 0 || (incoming().currentLevel == 1 && existing().completedModules.size() >= 2))) ||
+        
+        // Action: Complete Module & Level up
+        (incoming().diff(existing()).affectedKeys().hasOnly(['completedModules', 'currentLevel']) &&
          incoming().completedModules.size() > existing().completedModules.size() &&
-         incoming().completedModules.hasAll(existing().completedModules))
+         incoming().completedModules.hasAll(existing().completedModules) &&
+         // Verify Level 1 transition: Must have 2 modules and signed conduct
+         (incoming().currentLevel == existing().currentLevel || 
+          (incoming().currentLevel == 1 && incoming().completedModules.size() >= 2 && existing().signedCodeOfConduct == true)))
       );
     }
 
@@ -130,7 +133,7 @@ service cloud.firestore {
     }
 
     match /admins/{userId} {
-      allow get: if isSignedIn();
+      allow get: if isOwner(userId) || isAdmin();
       allow write: if isAdmin() && isValidAdmin(incoming());
     }
   }

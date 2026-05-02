@@ -118,12 +118,20 @@ const QUIZZES: Record<string, Question[]> = {
       correctIndex: 1
     }
   ],
-  'crypto-01': [
+  'crypto-basics-00': [
     {
       id: 1,
       text: "في التشفير غير المتماثل (Asymmetric)، كم مفتاحاً يمتلك المستخدم؟",
       options: ["مفتاح واحد فقط", "مفتاحان (عام وخاص)", "3 مفاتيح", "لا يحتاج مفاتيح"],
       correctIndex: 1
+    }
+  ],
+  'crypto-intro-01': [
+    {
+      id: 1,
+      text: "ما هو الهدف الأساسي من عملية 'التوقيع الرقمي'؟",
+      options: ["إخفاء محتوى الرسالة", "ضمان السرية التامة", "التأكد من هوية المرسل وعدم تعديل البيانات", "تسريع نقل الملفات"],
+      correctIndex: 2
     }
   ],
   'binary-exploitation': [
@@ -144,6 +152,16 @@ export default function ModuleQuiz({ moduleId, onComplete, onClose }: QuizProps)
   const [showExplanation, setShowExplanation] = useState(false);
 
   const questions = QUIZZES[moduleId] || [];
+  
+  if (questions.length === 0) {
+    return (
+      <div className="p-8 text-center text-cyber-muted font-mono uppercase text-xs">
+        <ShieldAlert size={48} className="mx-auto mb-4 opacity-20" />
+        NO_QUIZ_DATA_LOCATED_IN_VAULT_FOR_MODULE: {moduleId}
+      </div>
+    );
+  }
+
   const currentQuestion = questions[currentStep];
 
   const handleSelect = (index: number) => {

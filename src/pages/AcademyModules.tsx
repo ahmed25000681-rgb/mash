@@ -118,7 +118,7 @@ export default function AcademyModules() {
       <div className="mt-12 bg-indigo-600/5 border border-indigo-500/20 p-6 rounded flex items-center gap-4">
         <ShieldCheck className="text-cyber-accent" size={24} />
         <p className="text-[11px] text-slate-400 uppercase tracking-widest leading-loose">
-          سياسة الاستكشاف الحر مفعلة. جميع الوحدات الفنية متاحة الآن لتحدي قدراتك الهندسية. النجاح في التقييمات يمنحك شارات التصديق التقنية في سجل نظامك.
+          سياسة الاستكشاف الحر مفعلة. جميع الوحدات الفنية متاحة الآن لتحدي قدراتك الهندسية. قراءة وتوثيق الوحدات يرفع من مستوى وصولك في النظام.
         </p>
       </div>
     </div>

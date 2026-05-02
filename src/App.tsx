@@ -29,49 +29,13 @@ const NavLink = ({ to, icon: Icon, children }: { to: string, icon: any, children
   );
 };
 
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db, auth, handleFirestoreError, OperationType, checkAdmin, useAdmin } from './lib/firebase';
-import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { db, auth, handleFirestoreError, OperationType } from './lib/firebase';
 
 const Header = () => {
   const { progress } = useProgress();
   const { settings, updateSettings } = useSettings();
-  const [user, setUser] = React.useState(auth.currentUser);
-  const isAdmin = useAdmin();
-
-  React.useEffect(() => {
-    return auth.onAuthStateChanged((u) => setUser(u));
-  }, []);
-
-  const handleLogin = async () => {
-    const loadingToast = toast.loading('جاري التحقق من الهوية...');
-    try {
-      const provider = new GoogleAuthProvider();
-      // Ensure popup is triggered by direct user action
-      await signInWithPopup(auth, provider);
-      toast.success('تم تسجيل الدخول بنجاح', { id: loadingToast });
-    } catch (error: any) {
-      console.error("Login failed:", error);
-      if (error.code === 'auth/popup-closed-by-user') {
-        toast.error(
-          <div className="flex flex-col gap-1 items-start">
-            <span className="font-bold border-b border-white/20 pb-1 mb-1 w-full">تم إغلاق نافذة تسجيل الدخول</span>
-            <p>يرجى التأكد من السماح بالنوافذ المنبثقة (Popups) أو قم بفتح التطبيق في <b>علامة تبويب جديدة</b> للمتابعة.</p>
-          </div>,
-          { id: loadingToast, duration: 8000 }
-        );
-      } else if (error.code === 'auth/cancelled-popup-request') {
-        toast.dismiss(loadingToast);
-      } else {
-        toast.error('فشل تسجيل الدخول: ' + (error.message || 'خطأ غير معروف'), { id: loadingToast });
-      }
-    }
-  };
-
-  const handleLogout = () => signOut(auth);
   
   const getLevelLabel = (lvl: number) => {
-    if (isAdmin) return 'ROOT_ADMIN: الفراغ';
     switch(lvl) {
       case 0: return 'المستوى 01: مساعد';
       case 1: return 'المستوى 02: محلل';
@@ -91,8 +55,8 @@ const Header = () => {
         </div>
         <div className="flex flex-col">
           <h1 className="text-lg font-bold tracking-tight text-white leading-tight uppercase hologram-glow glitch-text">{settings.siteName}</h1>
-          <span className="text-[10px] text-cyber-accent font-mono tracking-[0.2em] uppercase opacity-80" style={{ color: settings.primaryColor }}>
-            {isAdmin ? 'نظام التحكم المركزي' : 'بروتوكول التحليل العميق'}
+          <span className="text-[10px] text-cyber-muted font-mono tracking-[0.2em] uppercase opacity-80">
+            بروتوكول التحليل العميق
           </span>
         </div>
       </div>
@@ -124,32 +88,12 @@ const Header = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        {user ? (
-          <>
-            <div className="flex flex-col items-start ml-2 text-left">
-              <div className="flex items-center gap-1.5">
-                {isAdmin && <Shield size={10} className="text-cyber-accent" />}
-                <span className="text-[11px] font-bold text-white uppercase tracking-wider">{user.displayName || 'مستخدم'}</span>
-              </div>
-              <span className={`text-[9px] font-mono uppercase tracking-tighter opacity-80 ${isAdmin ? 'text-cyber-accent' : 'text-cyber-emerald'}`}>
-                {getLevelLabel(progress.level)}
-              </span>
-            </div>
-            <button 
-              onClick={handleLogout}
-              className={`w-10 h-10 rounded-full border border-cyber-accent/30 bg-cyber-accent/5 flex items-center justify-center text-cyber-accent shadow-[0_0_15px_rgba(0,242,255,0.1)] hover:bg-cyber-accent hover:text-black transition-all ${isAdmin ? 'border-cyber-accent ring-1 ring-cyber-accent/50' : ''}`}
-            >
-              <UserIcon size={20} />
-            </button>
-          </>
-        ) : (
-          <button 
-            onClick={handleLogin}
-            className="px-4 py-1.5 border border-cyber-accent text-cyber-accent text-[10px] font-bold uppercase tracking-widest hover:bg-cyber-accent hover:text-black transition-all"
-          >
-            تسجيل الدخول [Login]
-          </button>
-        )}
+        <div className="flex flex-col items-start ml-2 text-left">
+          <span className="text-[11px] font-bold text-white uppercase tracking-wider">مستخدم مجهول [GUEST]</span>
+          <span className="text-[9px] font-mono uppercase tracking-tighter opacity-80 text-cyber-emerald">
+            {getLevelLabel(progress.level)}
+          </span>
+        </div>
       </div>
     </header>
   );
@@ -157,7 +101,6 @@ const Header = () => {
 
 const Sidebar = () => {
   const { progress } = useProgress();
-  const isAdmin = useAdmin();
   
   // Calculate L0 progress based on modules completed (2 modules for L1)
   const l0ProgressPercent = Math.min(100, Math.round((progress.completedModules.length / 2) * 100));
@@ -172,7 +115,6 @@ const Sidebar = () => {
           <NavLink to="/vault" icon={Shield}>المستودع</NavLink>
           <NavLink to="/forum" icon={MessageSquare}>المنتدى</NavLink>
           <NavLink to="/ethics" icon={Scale}>الأخلاقيات والقانون</NavLink>
-          {isAdmin && <NavLink to="/admin" icon={Shield}>لوحة التحكم (Admin)</NavLink>}
         </nav>
         
         <div className="mt-12 px-4 space-y-4">
@@ -270,7 +212,6 @@ export default function App() {
                 <Route path="/vault" element={<Vault />} />
                 <Route path="/forum" element={<Forum />} />
                 <Route path="/ethics" element={<Ethics />} />
-                <Route path="/admin" element={<AdminSettings />} />
               </Routes>
             </Layout>
           </ErrorBoundary>
