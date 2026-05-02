@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Clock, Share2, Bookmark, ShieldCheck, Terminal as TerminalIcon, X, List as ListIcon } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ArrowLeft, Clock, Share2, Bookmark, ShieldCheck, Terminal as TerminalIcon, List as ListIcon } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useProgress } from '../lib/ProgressContext';
-import ModuleQuiz from '../components/ModuleQuiz';
 import { LIBRARY } from '../data/articles';
 
 interface Section {
@@ -38,7 +37,11 @@ export default function ArticleView() {
       setFetchError(null);
       try {
         const response = await fetch(`/articles/${id}.md`);
-        if (!response.ok) throw new Error('فشل استرداد العقدة المعرفية [Resource Not Found]');
+        if (!response.ok) {
+          // Fallback to a generic technical template if file not found
+          setContent(`# مستند تقني قيد التجهيز: ${articleMeta.title} 🛠️\n\n### تحليل العقدة المعرفية\nنحن نقوم حالياً باسترجاع البيانات من الأرشيف العميق لهذه الوحدة. نظراً لمستوى التشفير العالي (Level 0${articleMeta.level})، قد يتطلب الأمر بعض الوقت لفك ضغط الملفات بالكامل.\n\n### ماذا تتضمن هذه الوحدة؟\n- تحليل عميق للبروتوكولات المستهدفة.\n- سيناريوهات محاكاة واقعية.\n- تقنيات الدفاع المتقدمة ضد التهديدات.\n\n> "المعرفة هي السلاح الوحيد الذي لا يمكن مصادرته." - نظام الأكاديمية\n\n--- \n*يرجى التحقق من لوحة التحكم لمتابعة تحديثات المحتوى.*`);
+          return;
+        }
         const text = await response.text();
         setContent(text);
       } catch (err) {

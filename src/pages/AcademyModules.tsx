@@ -52,6 +52,12 @@ const MODULES_DATA: Record<number, any[]> = {
     { id: 'crypto-attacks-01', title: "كسر الخوارزميات وهجمات القنوات الجانبية", duration: "120د", type: "متخصص Zero-Day" },
     { id: 'wireless-exploit-01', title: "استغلال ثغرات البروتوكولات اللاسلكية", duration: "90د", type: "متخصص Zero-Day" },
     { id: 'ai-sec-research-01', title: "البحث في ثغرات نماذج الذكاء الاصطناعي", duration: "130د", type: "متخصص Zero-Day" },
+  ],
+  4: [
+    { id: 'shadow-ops-01', title: "عمليات الظل: التخفي المتقدم والاتصالات المشفرة", duration: "180د", type: "سيد الظلال" },
+    { id: 'custom-tooling-01', title: "بناء أدوات الاختراق المخصصة بلغة Rust", duration: "160د", type: "سيد الظلال" },
+    { id: 'advanced-persistence-01', title: "آليات البقاء المتقدمة في البيئات المعزولة", duration: "140د", type: "سيد الظلال" },
+    { id: 'cryptographic-warfare-01', title: "الحرب التشفيرية: كسر وتأمين السيادة الرقمية", duration: "150د", type: "سيد الظلال" },
   ]
 };
 

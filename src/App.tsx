@@ -166,14 +166,11 @@ const Footer = () => {
   );
 };
 
-import { VerificationBanner } from './components/VerificationBanner';
-
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-cyber-black flex flex-col pb-10" dir="rtl">
       <div className="cyber-grid" />
       <Header />
-      <VerificationBanner />
       <div className="flex flex-1">
         <Sidebar />
         <main className="flex-1 lg:mr-64 p-8 overflow-x-hidden relative">

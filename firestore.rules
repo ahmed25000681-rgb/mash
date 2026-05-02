@@ -93,29 +93,17 @@ service cloud.firestore {
     }
 
     match /articles/{articleId} {
-      allow get: if isSignedIn() && (
-        existing().level == 0 || 
-        isAdmin() ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.signedCodeOfConduct == true)
-      );
-      allow list: if isSignedIn() && (
-        resource.data.level == 0 ||
-        isAdmin() ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.signedCodeOfConduct == true)
-      );
+      allow read: if true;
       allow write: if isAdmin() && isValidArticle(incoming()); 
     }
 
     match /tracks/{trackId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
 
     match /forum_posts/{postId} {
-      allow list: if isSignedIn();
-      allow get: if isSignedIn();
+      allow list, get: if true;
       allow create: if isSignedIn() && isEmailVerified() && isValidForumPost(incoming());
       allow update: if (isOwner(existing().authorId) || isAdmin()) && 
                       incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content']) &&

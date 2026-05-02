@@ -48,7 +48,7 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       
       // Level up logic (client-side only now)
       let newLevel = prev.level;
-      if (newModules.length >= 2 && prev.level === 0 && prev.ethicsSigned) {
+      if (newModules.length >= 2 && prev.level === 0) {
         newLevel = 1;
       }
       
